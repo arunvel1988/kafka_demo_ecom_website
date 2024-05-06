@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+</head>
+<body>
+    <h1>Shopping Cart</h1>
+    <ul>
+        {% for product in shopping_cart %}
+        <li>
+            <h3>{{ product['name'] }}</h3>
+            <p>Price: ${{ product['price'] }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    <form action="/checkout" method="post">
+        <button type="submit">Checkout</button>
+    </form>
+</body>
+</html>

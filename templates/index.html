@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Bazaar - Home</title>
+    <style>
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+        }
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .navbar li {
+            margin-right: 20px;
+        }
+        .navbar li:last-child {
+            margin-right: 0;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Welcome to Old Bazaar</h1>
+        <ul>
+            <li><a href="/view_cart">View Cart</a></li>
+            <li><a href="/checkout">Checkout</a></li>
+            <li><a href="/help">Help</a></li>
+        </ul>
+    </div>
+    <h2>Products</h2>
+    <ul>
+        {% for product in products %}
+        <li>
+            <img src="{{ url_for('static', filename='images/' + product['image']) }}" alt="{{ product['name'] }}" width="100">
+            <h3>{{ product['name'] }}</h3>
+            <p>Price: ${{ product['price'] }}</p>
+            <form action="/add_to_cart/{{ product['id'] }}" method="post">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
