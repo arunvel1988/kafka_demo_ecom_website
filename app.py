@@ -51,17 +51,6 @@ def add_to_cart(product_id):
     return redirect(url_for('index'))
 
 
-@app.route('/purchase', methods=['POST'])
-def purchase():
-    product_id = request.form.get('product_id')
-    user_id = '123'  # Replace with actual user ID
-    # Publish purchase event to Kafka topic
-    publish_event('purchase', {'product_id': product_id, 'user_id': user_id})
-    # Implement your notification logic here (e.g., sending an email)
-    send_notification(user_id, product_id)
-    return redirect(url_for('view_cart'))
-
-
 def publish_event(topic, event_data):
     # Serialize event data to JSON
     event_data_json = json.dumps(event_data)
@@ -90,8 +79,6 @@ def view_cart():
 @app.route('/checkout', methods=['POST'])
 def checkout():
     # Process checkout logic (not implemented in this example)
-    for product in shopping_cart:
-        publish_event('purchase', {'product_id': product['id'], 'user_id': '123'})
     shopping_cart.clear()
     return render_template('checkout_success.html')
 
@@ -108,12 +95,6 @@ def get_recommendations():
             # Yield real-time recommendations as Server-Sent Events
             yield f"data: {json.dumps(real_time_recommendations)}\n\n"
     return Response(event_stream(), content_type='text/event-stream')
-
-
-def send_notification(user_id, product_id):
-    # Implement your notification logic here, e.g., send an email or push notification
-    print(f"Sending notification to user {user_id} for product {product_id}")
-    # Example: requests.post(notification_service_url, json={"user_id": user_id, "product_id": product_id})
 
 
 if __name__ == '__main__':
