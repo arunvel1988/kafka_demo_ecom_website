@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 # Kafka producer configuration
 conf = {'bootstrap.servers': 'my-cluster-kafka-bootstrap.strimzi.svc.cluster.local:9092'}
-
 producer = Producer(conf)
 
 # Dummy product data
@@ -23,79 +22,67 @@ shopping_cart = []
 # Real-time recommendation update
 real_time_recommendations = {}
 
-
 @app.route('/')
 def index():
     return render_template('index.html', products=products)
 
-
 @app.route('/search', methods=['POST'])
 def search():
     query = request.form.get('query')
-    # Perform search logic (not implemented in this example)
-    # You can use Elasticsearch or other search engines for this
-    # Dummy search result
     search_results = [product for product in products if query.lower() in product['name'].lower()]
     return render_template('search_results.html', query=query, search_results=search_results)
-
 
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
     product = next((p for p in products if p['id'] == product_id), None)
     if product:
         shopping_cart.append(product)
-        # Publish event to Kafka topic
         publish_event('productclick', {'product_id': product_id, 'user_id': '123'})
-        # Update real-time recommendations
         update_real_time_recommendations(product)
     return redirect(url_for('index'))
 
+@app.route('/purchase', methods=['POST'])
+def purchase():
+    product_id = request.form.get('product_id')
+    user_id = '123'  # Replace with actual user ID
+    publish_event('purchase', {'product_id': product_id, 'user_id': user_id})
+    return redirect(url_for('view_cart'))
+
+@app.route('/checkout', methods=['POST'])
+def checkout():
+    user_id = '123'  # Replace with actual user ID
+    for product in shopping_cart:
+        publish_event('purchase', {'product_id': product['id'], 'user_id': user_id})
+    shopping_cart.clear()
+    return render_template('checkout_success.html')
 
 def publish_event(topic, event_data):
-    # Serialize event data to JSON
     event_data_json = json.dumps(event_data)
-    # Publish event to Kafka topic
     producer.produce(topic, value=event_data_json.encode('utf-8'))
-    # Flush the producer to ensure message delivery
     producer.flush()
 
-
 def update_real_time_recommendations(product):
-    # Dummy logic to generate recommendations
     recommendations = []
     if product['id'] == 1:
         recommendations.append("Get 10% off on Product 2!")
     elif product['id'] == 2:
         recommendations.append("Buy Product 1 along with Product 2 for a discounted price!")
-    # Update real-time recommendations
     real_time_recommendations['recommendations'] = recommendations
-
 
 @app.route('/view_cart')
 def view_cart():
     return render_template('cart.html', shopping_cart=shopping_cart)
 
-
-@app.route('/checkout', methods=['POST'])
-def checkout():
-    # Process checkout logic (not implemented in this example)
-    shopping_cart.clear()
-    return render_template('checkout_success.html')
-
-
 @app.route('/help')
 def help():
     return render_template('help.html')
-
 
 @app.route('/recommendations')
 def get_recommendations():
     def event_stream():
         while True:
-            # Yield real-time recommendations as Server-Sent Events
             yield f"data: {json.dumps(real_time_recommendations)}\n\n"
     return Response(event_stream(), content_type='text/event-stream')
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=9999)
