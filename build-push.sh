@@ -3,12 +3,11 @@
 
 # Variables
 APP_NAME="juna-website"  
-TIMESTAMP=$(date +%Y%m%d%H%M%S)  
-IMAGE_TAG="${TIMESTAMP}-v1"       
-                    
-DOCKER_REGISTRY="docker.io/arunvel1988"    
-DOCKER_USERNAME="arunvel1988"        
-DOCKER_PASSWORD="Ssjcoe123@#"        
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+IMAGE_TAG="${TIMESTAMP}-v1                    
+DOCKER_REGISTRY="docker.io/arunvel1988"
+DOCKER_USERNAME="arunvel1988"
+DOCKER_PASSWORD="Ssjcoe123@#"
 PORT=8000                         
 
 # Step 1: Stop and remove the running container (if any)
