@@ -10,6 +10,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        persist-credentials: false 
+
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -44,6 +47,5 @@ jobs:
         git config --global user.email "aryan.arunachalam@gmail.com"
         git add manifests/app.yaml
         git commit -m "Update image tag to ${{ steps.date.outputs.timestamp }}"
-        git push https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.repository }} HEAD:main
-
-    
+        git remote set-url origin https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/${{ github.repository }}
+        git push origin HEAD:main
