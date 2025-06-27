@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
 import json
 from confluent_kafka import Producer
-
+###################################################
+# topci name = productclick
 app = Flask(__name__)
 
 # Kafka producer configuration
