@@ -5,7 +5,7 @@ from confluent_kafka import Producer
 app = Flask(__name__)
 
 # Kafka producer configuration
-conf = {'bootstrap.servers': 'my-cluster-kafka-bootstrap.strimzi.svc.cluster.local:9092'}
+conf = {'bootstrap.servers': 'my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092'}
 producer = Producer(conf)
 
 # Dummy product data
