@@ -33,6 +33,6 @@ spec:
     spec:
       containers:
       - name: ecomm-web-app
-        image: arunvel1988/ecomm-analytics:20250627033301
+        image: arunvel1988/ecomm-analytics:20250627033330
         ports:
         - containerPort: 9999 # Update with your container port
