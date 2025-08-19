@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
 import json
 from confluent_kafka import Producer
+
 ###################################################
-# topci name = productclick
+# topic name = productclick
 app = Flask(__name__)
 
 # Kafka producer configuration
@@ -57,7 +58,19 @@ def checkout():
     shopping_cart.clear()
     return render_template('checkout_success.html')
 
+def get_client_ip():
+    """
+    Helper to fetch client IP.
+    Works with reverse proxies by checking X-Forwarded-For first.
+    """
+    if request.headers.get('X-Forwarded-For'):
+        # In case of multiple IPs in the header, take the first one
+        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    return request.remote_addr
+
 def publish_event(topic, event_data):
+    # Add client IP into the event data
+    event_data['ip'] = get_client_ip()
     event_data_json = json.dumps(event_data)
     producer.produce(topic, value=event_data_json.encode('utf-8'))
     producer.flush()
