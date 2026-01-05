@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: ecomm-web-app
-        image: arunvel1988/juna-webstie-ip:v1
+        image: docker.io/arunvel1988/juna-website-aiven-kafka:v1
         ports:
         - containerPort: 9999  # Update with your container port
         volumeMounts:
