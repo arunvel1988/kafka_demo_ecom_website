@@ -14,7 +14,7 @@ conf = {
     'ssl.ca.location': '/etc/kafka/ca.pem',  # Path to the CA certificate
     'ssl.certificate.location': '/etc/kafka/service.cert',  # Path to the service certificate
     'ssl.key.location': '/etc/kafka/service.key',  # Path to the service key
-    'ssl.endpoint.identification.algorithm': '',  # Optional: Disable SSL endpoint verification (if needed)
+    'ssl.endpoint.identification.algorithm': 'https',  # Optional: Disable SSL endpoint verification (if needed)
 }
 
 
