@@ -2,23 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, Response
 import json
 from confluent_kafka import Producer
 
-###################################################
-# topic name = productclick
+# Topic name = productclick
 app = Flask(__name__)
 
 # Kafka producer configuration
-# Aiven Kafka configuration
 conf = {
     'bootstrap.servers': 'arunvel1988-kafka-arunvel1988.e.aivencloud.com:14253',  # Aiven Kafka broker address
     'security.protocol': 'SSL',  # Use SSL/TLS for secure connection
     'ssl.ca.location': '/etc/kafka/ca.pem',  # Path to the CA certificate
     'ssl.certificate.location': '/etc/kafka/service.cert',  # Path to the service certificate
     'ssl.key.location': '/etc/kafka/service.key',  # Path to the service key
-    'ssl.endpoint.identification.algorithm': 'None',  # Optional: Disable SSL endpoint verification (if needed)
+    'ssl.endpoint.identification.algorithm': 'https',  # Enforce SSL hostname verification
 }
 
-
-
+# Create Kafka producer
 producer = Producer(conf)
 
 # Dummy product data
@@ -50,6 +47,7 @@ def add_to_cart(product_id):
     product = next((p for p in products if p['id'] == product_id), None)
     if product:
         shopping_cart.append(product)
+        # Publishing event to the correct topic 'productclick'
         publish_event('productclick', {'product_id': product_id, 'user_id': '123'})
         update_real_time_recommendations(product)
     return redirect(url_for('index'))
@@ -58,14 +56,16 @@ def add_to_cart(product_id):
 def purchase():
     product_id = request.form.get('product_id')
     user_id = '123'  # Replace with actual user ID
-    publish_event('purchase', {'product_id': product_id, 'user_id': user_id})
+    # Publishing event to the correct topic 'productclick' or 'purchase'
+    publish_event('productclick', {'product_id': product_id, 'user_id': user_id})
     return redirect(url_for('view_cart'))
 
 @app.route('/checkout', methods=['POST'])
 def checkout():
     user_id = '123'  # Replace with actual user ID
+    # Publish each item in the shopping cart to the correct topic
     for product in shopping_cart:
-        publish_event('purchase', {'product_id': product['id'], 'user_id': user_id})
+        publish_event('productclick', {'product_id': product['id'], 'user_id': user_id})
     shopping_cart.clear()
     return render_template('checkout_success.html')
 
