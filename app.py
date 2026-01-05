@@ -7,7 +7,18 @@ from confluent_kafka import Producer
 app = Flask(__name__)
 
 # Kafka producer configuration
-conf = {'bootstrap.servers': 'my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092'}
+# Aiven Kafka configuration
+conf = {
+    'bootstrap.servers': 'arunvel1988-kafka-arunvel1988.e.aivencloud.com:14253',  # Aiven Kafka broker address
+    'security.protocol': 'SSL',  # Use SSL/TLS for secure connection
+    'ssl.ca.location': '/etc/kafka/ca.pem',  # Path to the CA certificate
+    'ssl.certificate.location': '/etc/kafka/service.cert',  # Path to the service certificate
+    'ssl.key.location': '/etc/kafka/service.key',  # Path to the service key
+    'ssl.endpoint.identification.algorithm': '',  # Optional: Disable SSL endpoint verification (if needed)
+}
+
+
+
 producer = Producer(conf)
 
 # Dummy product data
